@@ -28,8 +28,18 @@ class Wpp
 
         client.on('message', async (message) => {
             if (message.isStatus) return
+            console.log(message)
             const clients = await WebhookClient.all()
-            return Promise.all(clients.map(client => axios.post(client.url, message)))
+
+            for (const client of clients) {
+                try {
+                    await axios.post(client.url, { message })
+                } catch (e) {
+                    Logger.error('Falha ao enviar webhook para o cliente: ' + client.url + '. Erro: ', e)
+                } finally {
+                    Logger.info('Webhook enviado para ' + client.url)
+                }
+            }
         })
 
         client.initialize()
