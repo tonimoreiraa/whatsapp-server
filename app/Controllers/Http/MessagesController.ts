@@ -17,8 +17,8 @@ export default class MessagesController {
         const messages = await request.input('messages')
         for (const {to, content} of messages) {
             try {
-                await Wpp.client.sendMessage(to, content)
-                await Wpp.client.sendMessage(convert(to), content)
+                await Wpp.client.sendMessage(to, content.replace(/<[^>]+>/g, ''))
+                await Wpp.client.sendMessage(convert(to), content.replace(/<[^>]+>/g, ''))
             } catch (e) {
                 Logger.error(e)
             }
