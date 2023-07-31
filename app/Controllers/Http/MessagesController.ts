@@ -12,7 +12,6 @@ function convert(number: string) {
 }
 
 export default class MessagesController {
-
     async store({request}: HttpContextContract) {
         const messages = await request.input('messages')
         for (const {to, content} of messages) {
@@ -24,5 +23,4 @@ export default class MessagesController {
             }
         }
     }
-
 }

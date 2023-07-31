@@ -35,7 +35,7 @@
       height: 200px;
       margin: 0 auto;
       border: 2px solid #ccc;
-      border-radius: 8px;
+      border-radius: 5px;
     }
 
     .status {
@@ -43,47 +43,23 @@
       margin-top: 10px;
       color: #888;
     }
-    .check-symbol {
-        width: 200px;
-        height: 200px;
-        background-color: #12CD6A;
-        border-radius: 8px;
-        display: none;
-        justify-content: center;
-        align-items: center;
-        margin: 0 auto;
-        flex-direction: column;
-    }
-    .check-symbol h1 {
-        font-size: 20px;
-        margin: 0;
-        margin-top: 20px;
-    }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
-  <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
   <div id="app">
     <div class="chat-container">
-      <h2>Escanear QR Code do WhatsApp</h2>
+      <h2>WhatsApp QR Code Scanner</h2>
       <div class="qr-code" id="qrcode"></div>
-      <div class="check-symbol">
-        <i class="fas fa-check fa-2xl"></i>
-        <h1>Conectado!</h1>
-      </div>
-      <div class="status" id="status">Aguardando o QR Code...</div>
+      <div class="status" id="status">Waiting for QR Code...</div>
     </div>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
   <script>
-    const socket = io('http://localhost:3333');
-    const checkSymbol = document.querySelector('.check-symbol');
-    const statusElement = document.getElementById('status')
-    const qrcodeDiv = document.getElementById('qrcode');
+    const socket = io();
 
     // Função para gerar o QR Code usando a biblioteca QRCode.js
     function generateQRCode(code) {
+      const qrcodeDiv = document.getElementById('qrcode');
       if (!qrcodeDiv) return;
 
       qrcodeDiv.innerHTML = ''; // Limpa o conteúdo anterior, se houver
@@ -99,15 +75,13 @@
     socket.on('code', (data) => {
       if (data && data.code) {
         generateQRCode(data.code);
-        statusElement.innerText = 'Escaneie o QRCode! Aguardando a conexão...';
+        document.getElementById('status').innerText = 'QR Code scanned! Waiting for connection...';
       }
     });
 
     // Evento para verificar quando estiver conectado
     socket.on('ready', () => {
-      checkSymbol.style.display = 'flex';
-    qrcodeDiv.remove()
-      statusElement.innerText = 'Conectado!'
+      document.getElementById('status').innerText = 'Connected!';
     });
   </script>
 </body>

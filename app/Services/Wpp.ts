@@ -2,7 +2,7 @@ import qrcode from 'qrcode-terminal';
 import Logger from '@ioc:Adonis/Core/Logger'
 import WebhookClient from 'App/Models/WebhookClient';
 import axios from 'axios';
-import Code from 'App/Models/Code';
+import Ws from './Ws';
 
 class Wpp
 {
@@ -24,13 +24,14 @@ class Wpp
         client.on('qr', (qr) => {
             Logger.info('Escaneie o código a seguir.')
             qrcode.generate(qr, {small: true})
-            Code.updateOrCreate({id: 1}, {code: qr})
+            Ws.io.emit('code', { code: qr })
         })
 
         client.on('ready', () => {
             Logger.info('Conectado com sucesso!')
             this.booted = true
             this.client = client
+            Ws.io.emit('ready', true)
         })
 
         client.on('message', async (message) => {
