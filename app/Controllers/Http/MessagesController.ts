@@ -14,10 +14,14 @@ function convert(number: string) {
 export default class MessagesController {
     async store({request}: HttpContextContract) {
         const messages = await request.input('messages')
-        for (const {to, content} of messages) {
+        for (var {to, content} of messages) {
+
+            content = content
+                .replace('\r', '').replace(/<[^>]+>/g, '')
+                
             try {
-                await Wpp.client.sendMessage(to, content.replace(/<[^>]+>/g, ''))
-                await Wpp.client.sendMessage(convert(to), content.replace(/<[^>]+>/g, ''))
+                await Wpp.client.sendMessage(to, content)
+                await Wpp.client.sendMessage(convert(to), content)
             } catch (e) {
                 Logger.error(e)
             }
